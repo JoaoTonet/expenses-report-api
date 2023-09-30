@@ -19,6 +19,7 @@ public class DepartmentController : ControllerBase
         try
         {
             var departments = await repo.GetAllDepartmentsAsync();
+            Response.Headers.AppendList("Access-Control-Allow-Origin", new List<string>() { "*" });
             return Ok(departments);
         }
         catch (System.Exception)
