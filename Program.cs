@@ -1,9 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+ // Adds Microsoft Identity platform (Azure AD B2C) support to protect this Api
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApi(options =>
+{
+    builder.Configuration.Bind("AzureAdB2C", options);
 
+    options.TokenValidationParameters.NameClaimType = "name";
+},
+options => { builder.Configuration.Bind("AzureAdB2C", options); });
+    // End of the Microsoft Identity platform block   
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +33,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
